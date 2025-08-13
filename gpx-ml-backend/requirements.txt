@@ -1,0 +1,6 @@
+fastapi 
+uvicorn 
+pandas 
+gpxpy 
+joblib 
+python-multipart 

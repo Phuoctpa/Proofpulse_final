@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up | ProofPulse</title>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url('assets/images/signupbg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      backdrop-filter: blur(6px);
+      color: #fff;
+    }
+    
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--color-deep-blue);
+      padding: 1rem 2rem;
+      color: white;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo img {
+      height: 50px;
+      margin-right: 10px;
+      maxheight: 100%;
+    }
+
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+
+    .signup-container {
+      background: rgba(0, 0, 0, 0.6);
+      padding: 2rem 3rem;
+      border-radius: 16px;
+      max-width: 500px;
+      margin: 5vh auto;
+      color: #fff;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+
+<body>
+    <header>
+      <div class="logo">
+        <a href="index.html" style="display: flex; align-items: center; text-decoration: none; color: white;">
+          <img src="assets/images/logobw.png" alt="ProofPulse Logo" />
+        </a>
+      </div>
+      <a class="nav-link" href="signinv2.html">Sign in</a>
+    </header>
+
+  <div class="signup-container">
+    <h2>Sign Up for ProofPulse</h2>
+    <form id="signupForm">
+      
+      <label for="name">Full Name:</label>
+      <input type="text" id="name" name="name" required />
+
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob" required />
+
+      <label for="insurer">Insurer:</label>
+      <select id="insurer" name="insurer" required>
+        <option value="">-- Select Insurer --</option>
+        <option value="aia">AIA</option>
+        <option value="prudential">Prudential</option>
+        <option value="metlife">MetLife</option>
+      </select>
+
+      <label for="policy-number">Policy Number:</label>
+      <input type="text" id="policy-number" name="policy-number" required />
+
+      <label for="policy-value">Policy Value (ETH):</label>
+      <input type="number" id="policy-value" name="policy-value" step="0.01" required />
+
+
+      <button type="submit" class="primary">Sign Up</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+  <script src="assets/js/signupv2.js"></script>
+
+</body>
+</html>

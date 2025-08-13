@@ -1,0 +1,269 @@
+:root {
+  --color-deep-blue: #0000FF;
+  --color-royal-blue: #5C6EFF;
+  --color-sky-blue: #89BFFF;
+  --color-hot-pink: #FF00B4;
+  --color-medium-pink: #FF66CC;
+  --color-light-pink: #FF99D6;
+  --color-text-dark: #222;
+  --color-bg-light: #f9f9f9;
+  --color-bg-section: #fff;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  color: var(--color-text-dark);
+  background: var(--color-bg-light);
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--color-deep-blue);
+  padding: 1rem 2rem;
+  color: white;
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.logo img {
+  height: 50px; 
+  max-height: 100%;     
+  display: block;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+}
+
+.nav-link {
+  color: white;
+  text-decoration: none;
+  margin-right: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  text-decoration: underline;
+}
+
+.sign-up-btn {
+  background-color: white;
+  text-decoration: none;
+  color: blue;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.sign-up-btn:hover {
+  opacity: 0.9;
+}
+
+.hero {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
+  color: white;
+  position: relative;
+  z-index: 1;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
+
+.hero p {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+}
+
+.hero-buttons .primary {
+  background: var(--color-deep-blue);
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  text-decoration: none;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.hero-buttons .primary:hover {
+  background: var(--color-medium-pink);
+  box-shadow: 0 0 15px var(--color-hot-pink);
+}
+
+.section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  color: white;             /* Keep text white */
+  background: none;         /* Remove background box */
+  text-shadow: 0 2px 5px rgba(0,0,0,0.6); /* Add a shadow for contrast */
+}
+
+.section h2 {
+  background: rgba(0, 0, 0, 0.3);
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.step i {
+  font-size: 3rem;       /* Increase icon size */
+  color: white;          /* Match your text color */
+  margin-bottom: 1rem;   /* Space below icon */
+  display: block;
+  text-align: center;
+}
+
+/* Background container for all four sections */
+.bg-group-exercise {
+  background: url('assets/images/group-workout.jpg') center center/cover no-repeat;
+  position: relative;
+  z-index: 0;
+}
+
+.bg-group-exercise::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6); /* overlay */
+  z-index: 0;
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+.bg-group-exercise .section {
+  position: relative;
+  padding: 0 4rem 2rem;
+  text-align: center;
+  z-index: 1;
+  color: white;
+}
+
+/* Cards & Steps Styling */
+.cards, .steps {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.card, .step {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 1.5rem;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  width: 250px;
+  text-align: center;
+}
+
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.content-wrapper {
+  position: relative;
+  z-index: 1;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem 2rem;
+  background: var(--color-deep-blue);
+  color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .cards, .steps {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .card, .step {
+    width: 100%;
+    max-width: 300px;
+  }
+} 
+
+/* Sign up */
+
+.signup-container {
+  max-width: 500px;
+  margin: 5rem auto;
+  background: white;
+  padding: 2.5rem 2rem;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.signup-container h2 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #FFFFFF; /* White title */
+}
+
+form label {
+  display: block;
+  margin-top: 1.2rem;
+  font-weight: 600;
+}
+
+form input,
+form select {
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 0.4rem;
+  border: 2px solid #ccc;
+  border-radius: 10px;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+form .primary {
+  margin-top: 2rem;
+  background: #FF00B4; /* Hot pink button */
+  color: white;
+  padding: 0.8rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.3s ease;
+}
+
+form .primary:hover {
+  background: #FF66CC; /* softer pink on hover */
+}
+

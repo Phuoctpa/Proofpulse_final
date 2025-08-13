@@ -1,0 +1,161 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: url('/static/assets/images/DB_BG.jpg') no-repeat center center fixed;
+  color: #fff;
+}
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #0000FF;
+  z-index: 3;
+  position: relative;
+}
+.logo img {
+  height: 50px;
+}
+.redeem-btn {
+  background-color: #fff;
+  color: #0000FF;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.redeem-btn:hover {
+  background-color: #ffe6f0;
+}
+.bg-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+.main-content {
+  position: relative;
+  z-index: 2;
+}
+.container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+.dashboard {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+  grid-template-areas:
+    "character character character"
+    "metrics activity rewards"
+    "quests quests quests"
+    "streaks streaks streaks";
+}
+.card {
+  background: #fff;
+  color: #222;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+.card:hover {
+  transform: scale(1.02);
+}
+.card h3 {
+  margin-top: 0;
+}
+.stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.stats-table td {
+  padding: 0.5rem 0;
+}
+.progress {
+  background: #eee;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 0.5rem;
+}
+.progress-bar {
+  height: 10px;
+  background: #FF00B4;
+}
+.character-card {
+  grid-area: character;
+  padding: 2.5rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+.character-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin-bottom: 1rem;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.metrics-card { grid-area: metrics; }
+.activity-card { grid-area: activity; }
+.rewards-card { grid-area: rewards; }
+.quests-card { grid-area: quests; }
+
+#activity-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.75rem;
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 20px;
+  color: #222;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  margin-top: 1rem;
+}
+#activity-calendar div {
+  text-align: center;
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  background-color: #f3f3f3;
+  transition: all 0.2s ease;
+}
+#activity-calendar div:hover {
+  transform: scale(1.05);
+  background-color: #eaeaea;
+}
+#activity-calendar .weekday {
+  background-color: transparent;
+  color: #333;
+  font-weight: 700;
+  padding: 0.5rem 0;
+  cursor: default;
+}
+#activity-calendar .active-day {
+  background-color: #d1e7dd;
+  color: #155724;
+}
+
+/* Responsive (Mobile) */
+@media (max-width: 1000px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "character"
+      "metrics"
+      "activity"
+      "rewards"
+      "quests"
+      "streaks";
+  }
+  .container { padding: 1rem; }
+  .card { padding: 1.2rem; }
+}

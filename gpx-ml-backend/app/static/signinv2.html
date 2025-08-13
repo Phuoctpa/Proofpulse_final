@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | ProofPulse</title>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  
+  <style>
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--color-deep-blue);
+      padding: 1rem 2rem;
+      color: white;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    .logo img {
+      height: 50px;
+      margin-right: 10px;
+      maxheight: 100%;
+    }
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+    }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url('assets/images/loginbg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+    }
+    .hero {
+      text-align: center;
+      margin-top: 15vh;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      border-radius: 12px;
+      width: fit-content;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .btn.primary {
+      background-color: #FF00B4;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .btn.primary:hover {
+      background-color: #e600a8;
+    }
+    #status {
+      margin-top: 1rem;
+    }
+    #userImage {
+      margin-top: 20px;
+      max-width: 200px;
+      border-radius: 8px;
+      display: none; /* Hidden initially */
+    }
+  </style>
+</head>
+  
+<body>
+  <header>
+    <div class="logo">
+      <a href="index.html" style="display: flex; align-items: center; text-decoration: none; color: white;">
+        <img src="assets/images/logobw.png" alt="ProofPulse Logo" />
+      </a>
+    </div>
+    <a class="nav-link" href="signupv2.html">Sign up</a>
+  </header>
+  
+  <section class="hero">
+    <h2>Login to ProofPulse</h2>
+    <p>Connect your wallet to continue.</p>
+    <button id="connectBtn" class="btn primary">Connect with MetaMask</button>
+    <p id="status"></p>
+    <img id="userImage" src="" alt="User Profile Picture" />
+  </section>
+
+<script>
+  const contractAddress = "0x7bC0fC7A7EF15FA2839c32F6a3b04B2edD3e3e68";
+  const contractABI = [
+    "function users(address) view returns (address user,string name,uint256 dob,string policyNo,uint256 contractValue,address insurer)"
+  ];
+
+  const connectBtn = document.getElementById("connectBtn");
+  const statusText = document.getElementById("status");
+  const userImage = document.getElementById("userImage");
+
+  connectBtn.onclick = async () => {
+    try {
+      if (!window.ethereum) {
+        statusText.textContent = "❌ MetaMask not installed.";
+        return;
+      }
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      await provider.send("eth_requestAccounts", []);
+      const signer = provider.getSigner();
+      const userAddress = await signer.getAddress();
+
+      statusText.textContent = "🔍 Checking registration...";
+
+      const contract = new ethers.Contract(contractAddress, contractABI, provider);
+      const userInfo = await contract.users(userAddress);
+
+      // Check if the stored user address is not zero
+      if (userInfo.user !== ethers.constants.AddressZero) {
+        statusText.textContent = "✅ Health ID found! Redirecting...";
+
+          setTimeout(() => {
+          window.location.href = "dashboardv14.html";
+        }, 1000);
+      } else {
+        statusText.textContent = "❌ Wallet not registered with Health ID.";
+        userImage.style.display = "none"; // Hide image if not registered
+      }
+    } catch (err) {
+      console.error(err);
+      statusText.textContent = "⚠️ Error during wallet connection or registration check.";
+      userImage.style.display = "none"; // Hide image in case of an error
+    }
+  };
+</script>
+
+</body>
+</html>

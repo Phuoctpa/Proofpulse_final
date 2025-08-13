@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Proofpulse</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/staticdashboard.css" />
+  <style>
+  /* ===== Base layout ===== */
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: url('/static/assets/images/DB_BG.jpg') no-repeat center center fixed;
+    color: #fff;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: #0000FF; /* brand blue */
+    z-index: 3;
+    position: relative;
+  }
+  .logo img { height: 50px; }
+
+  .redeem-btn {
+    background-color: #fff;
+    color: #0000FF;
+    font-weight: bold;
+    font-size: 16px;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform .1s ease-in-out;
+  }
+  .redeem-btn:hover { background-color: #f1f5ff; }
+  .redeem-btn:disabled { opacity:.6; cursor:not-allowed; }
+
+  .bg-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+  }
+  .main-content { position: relative; z-index: 2; }
+  .container { padding: 2rem; max-width: 1200px; margin: auto; }
+
+  /* ===== Dashboard grid ===== */
+  .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2rem;
+    grid-template-areas:
+      "character character character"
+      "metrics activity rewards"
+      "quests quests quests"
+      "streaks streaks streaks";
+  }
+  @media (max-width: 1024px){
+    .dashboard { grid-template-columns: 1fr; grid-template-areas: "character" "metrics" "activity" "rewards" "quests" "streaks"; }
+  }
+
+  /* ===== Cards ===== */
+  .card {
+    background: #fff;
+    color: #222;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+    transition: transform 0.2s, box-shadow .2s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,0,0,0.12); }
+  .card h3 { margin-top: 0; }
+
+  .stats-table { width: 100%; border-collapse: collapse; }
+  .stats-table td { padding: 0.5rem 0; }
+
+  .progress {
+    background: #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 0.5rem;
+  }
+  .progress-bar { height: 10px; background: #FF00B4; } /* keep your pink XP bar */
+
+  .character-card { grid-area: character; padding: 2.5rem; font-size: 1.1rem; text-align: center; }
+  .character-avatar {
+    width: 120px; height: 120px; border-radius: 50%; margin-bottom: 1rem;
+    object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+  .metrics-card { grid-area: metrics; }
+  .activity-card { grid-area: activity; }
+  .rewards-card { grid-area: rewards; }
+  .quests-card { grid-area: quests; }
+
+  /* ===== Activity Calendar ===== */
+  #activity-calendar {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 0.75rem; background: #ffffff; padding: 1.5rem; border-radius: 20px;
+    color: #222; font-size: 0.95rem; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    margin-top: 1rem;
+  }
+  #activity-calendar div {
+    text-align: center; padding: 1rem; border-radius: 12px; font-weight: 600;
+    background-color: #f3f3f3; transition: all 0.2s ease;
+  }
+  #activity-calendar div:hover { transform: scale(1.05); background-color: #eaeaea; }
+  #activity-calendar .weekday { background-color: transparent; color: #333; font-weight: 700; padding: 0.5rem 0; cursor: default; }
+  #activity-calendar .active-day { background-color: #d1e7dd; color: #155724; }
+
+  /* ===== Simple quest list (used by earlier version) ===== */
+  .quest-item { padding: .5rem 0; display:flex; justify-content:space-between; gap:.75rem; }
+  .quest-item.done { color: #1e7e34; font-weight: 600; }
+  .quest-status { opacity:.8; }
+
+  /* ===== THEME-ALIGNED QUEST CARDS (white + blue) ===== */
+/* Quest cards tuned to your theme */
+.quest-grid{
+  display:grid;grid-template-columns:repeat(4,minmax(220px,1fr));gap:1rem
+}
+@media (max-width:1200px){.quest-grid{grid-template-columns:repeat(2,minmax(220px,1fr))}}
+@media (max-width:640px){.quest-grid{grid-template-columns:1fr}}
+
+.quest-card{
+  position:relative;background:#dde3f0;border-radius:14px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);padding:18px;color:#222
+}
+.quest-card .ribbon{
+  position:absolute;top:-14px;left:20px;display:flex;align-items:center;gap:.5rem;
+  background:#0000FF;color:#fff;border-radius:12px;padding:6px 12px 7px;
+  box-shadow:0 3px 0 rgba(0,0,0,.25), 0 6px 14px rgba(0,0,0,.15)
+}
+.ribbon .coin{font-size:1rem}
+.ribbon .amount{font-weight:800;letter-spacing:.2px}
+
+.quest-card .title{font-weight:800;font-size:1.05rem;margin:18px 0 6px}
+.quest-card .desc{font-size:.95rem;color:#666}
+
+.quest-card .progress{background:#e9ecef;border-radius:999px;overflow:hidden;height:10px;margin-top:8px}
+.quest-card .bar{height:100%;width:0%;background:#2a2aff;transition:width .3s ease}
+.quest-card.done .bar{background:#22c55e}
+
+.quest-card .count{display:flex;justify-content:space-between;margin-top:8px;font-weight:700;color:#444}
+
+</style>
+
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <a href="index.html"><img src="/static/assets/images/logobw.png" alt="Proofpulse" /></a>
+    </div>
+    <div>
+      <button class="redeem-btn" onclick="redeemAllEligible()">🎁 Redeem</button>
+      <a href="index.html" style="color: white; margin-left: 1rem;">Logout</a>
+    </div>
+  </header>
+
+  <div class="bg-overlay"></div>
+  <div class="main-content">
+    <div class="container">
+      <h1>Welcome, FitWarrior! ✨</h1>
+  
+      <div class="dashboard">
+        <div class="card character-card">
+          <img src="https://cdn-icons-png.flaticon.com/512/5719/5719910.png" alt="Avatar" class="character-avatar">
+          <h3>👤 Character Status</h3>
+
+          <p><strong>Level:</strong> <span id="level-value">-</span></p>
+          <p><strong>XP:</strong> <span id="xp-value">-</span></p>
+
+          <div class="progress">
+          <div class="progress-bar" style="width: 0%"></div>
+          </div>
+
+          <p><strong>Badges:</strong> Early Bird</p>
+          <hr style="margin: 1.5rem 0;">
+
+          <div class="mt-4 p-4 border rounded bg-white text-black" style="margin-top:1.5rem;">
+        <h3>🧠 Upload GPX for Verification</h3>
+        <input type="file" id="gpxFileInput" accept=".gpx" />
+        <button onclick="verifyWorkout()" class="btn mt-2 bg-blue-600 text-white px-4 py-2 rounded">Start Verification</button>
+       <div id="mlResult" class="mt-2 text-sm text-gray-800"></div>
+        </div>
+           <hr style="margin: 1.5rem 0;">
+
+                 
+          <h3>🩺 Health ID Proof</h3>
+          
+          <p>Date of Birth: <span id="health-dob">Loading...</span></p>
+          <p>Policy No: <span id="health-policy">Loading...</span></p>
+          <p>Contract Value: <span id="health-contract">Loading...</span></p>
+          <p>Insurer: <span id="health-insurer">Loading...</span></p>
+
+
+
+        </div>
+  
+        <div class="card metrics-card">
+          <h3>🏋️ Body Metrics</h3>
+          <table class="stats-table">
+            <tr><td>Height:</td><td>169 cm</td></tr>
+            <tr><td>Weight:</td><td>77.3 kg</td></tr>
+            <tr><td>Body Fat:</td><td>20.8%</td></tr>
+          </table>
+        </div>
+  
+        <div class="card activity-card">
+          <h3>🚶️ Daily Activity</h3>
+          <table class="stats-table">
+            <tr><td>Steps:</td><td id="steps">-</td></tr>
+            <tr><td>Sleep:</td><td id="sleep">-</td></tr>
+            <tr><td>Calories:</td><td id="calories">-</td></tr>
+          </table>
+        </div>
+  
+        <div class="card rewards-card">
+        <h3>🌟 Total Rewards</h3>
+        
+        <p><strong>Total ETH earned:</strong> <span id="total-earned">—</span></p>
+        <p><strong>Today:</strong> <span id="earned-today">—</span></p>
+        <p><strong>Redeemable now:</strong> <span id="redeemable-now">Calculating…</span></p>
+        </div>
+
+
+  
+        <div class="card quests-card quests">
+          <h3>🚀 Daily Quests</h3>
+          <div id="daily-quests" class="quest-grid"></div>
+        </div>
+  
+        <div class="card quests-card" style="grid-area: streaks;">
+          <h3>📅 Activity Calendar</h3>
+          <div style="margin-bottom: 1rem;">
+            <label for="quest-filter" style="margin-right: 0.5rem;">Filter by Quest:</label>
+              <select id="quest-filter">
+              <option value="all">All</option>
+              <option value="run5k">🏁 Run 5 km</option>
+              <option value="elev100m">⛰️ Step up 100 m</option>
+              <option value="sleep8h">💤 Sleep 8 hours</option>
+              <option value="ex30m">💪 Exercise 30 minutes</option>
+            </select>
+          </div>
+          <div id="activity-calendar"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+<script>
+/* =================== Addresses & ABIs =================== */
+const activityLoggerAddress = "0x26E24bfe2A21515eb91Cea4b754FA56067bC70cB";
+const healthIdAddress      = "0x7bC0fC7A7EF15FA2839c32F6a3b04B2edD3e3e68";
+
+const activityLoggerAbi = [
+  "function getUserActivities(address user) view returns ((uint256 distanceKmX100,uint256 elevationGainM,uint256 timestamp,bool isRewarded)[])",
+  "function getThresholds() view returns (uint256 distanceThreshold,uint256 elevationThreshold)",
+  "function rewardAmount() view returns (uint256)",
+  "function redeemReward()",
+  "event ActivityLogged(address indexed user,uint256 distanceKmX100,uint256 elevationGainM,uint256 timestamp)",
+  "event RewardRedeemed(address indexed user,uint256 amount,uint256 eligibleCount)"
+];
+
+const healthIdAbi = [
+  {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"users","outputs":[
+    {"internalType":"address","name":"user","type":"address"},
+    {"internalType":"string","name":"name","type":"string"},
+    {"internalType":"uint256","name":"dob","type":"uint256"},
+    {"internalType":"string","name":"policyNo","type":"string"},
+    {"internalType":"uint256","name":"contractValue","type":"uint256"},
+    {"internalType":"address","name":"insurer","type":"address"}],
+    "stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"address","name":"user","type":"address"}],
+   "name":"getUserInsurerInfo","outputs":[
+    {"internalType":"string","name":"insurerName","type":"string"},
+    {"internalType":"address","name":"insurerAddress","type":"address"},
+    {"internalType":"string","name":"licenseInfo","type":"string"}],
+   "stateMutability":"view","type":"function"}
+];
+
+/* =================== Helpers & constants =================== */
+const XP_PER_ACTIVITY = 10;
+const XP_PER_LEVEL = 100;
+
+function formatDobValue(dobBig) {
+  const val = typeof dobBig === "object" && dobBig?._isBigNumber
+    ? parseInt(dobBig.toString(), 10) : Number(dobBig);
+  if (!val || Number.isNaN(val)) return "Not set";
+  const date = val > 10000000000 ? new Date(val) : new Date(val * 1000);
+  return date.toLocaleDateString("en-GB");
+}
+
+/* =================== Boot =================== */
+async function initCharacterStatus() {
+  try {
+    if (!window.ethereum) throw new Error("Wallet not found");
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const user = await signer.getAddress();
+
+    // XP/Level
+    const loggerRead = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, provider);
+    const acts = await loggerRead.getUserActivities(user);
+    const xp = acts.length * XP_PER_ACTIVITY;
+    const level = Math.floor(xp / XP_PER_LEVEL) + 1;
+    const pct = Math.floor((xp % XP_PER_LEVEL) / XP_PER_LEVEL * 100);
+    document.getElementById("level-value").textContent = level;
+    document.getElementById("xp-value").textContent = xp;
+    document.querySelector(".progress-bar").style.width = pct + "%";
+
+    // Health + Rewards
+    await loadHealthID(user, provider);
+    await loadOverallEarnings(provider, user);
+    await loadRedeemableValue(provider, user);
+
+    // Mock stats
+    fetchMockData();
+
+    // Quests: render cards + set ribbon + today status + calendar
+    renderQuestCards();
+    await setQuestRibbonAmounts(provider);
+    await updateDailyQuestStatus(provider, user);
+    await initCalendarFromActivities(provider, user);
+
+    // Live updates
+    const logger = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, provider);
+    logger.on("ActivityLogged", (u) => {
+      if (u.toLowerCase() === user.toLowerCase()) {
+        loadOverallEarnings(provider, user);
+        loadRedeemableValue(provider, user);
+        updateDailyQuestStatus(provider, user);
+        initCalendarFromActivities(provider, user);
+      }
+    });
+    logger.on("RewardRedeemed", (u) => {
+      if (u.toLowerCase() === user.toLowerCase()) {
+        loadOverallEarnings(provider, user);
+        loadRedeemableValue(provider, user);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+/* =================== HealthID =================== */
+async function loadHealthID(userAddress, provider) {
+  try {
+    const health = new ethers.Contract(healthIdAddress, healthIdAbi, provider);
+    const u = await health.users(userAddress);
+    if (u.name && u.name.length) {
+      const h1 = document.querySelector("h1");
+      if (h1) h1.textContent = `Welcome, ${u.name}! ✨`;
+    }
+    document.getElementById("health-dob").textContent      = formatDobValue(u.dob);
+    document.getElementById("health-policy").textContent   = u.policyNo;
+    document.getElementById("health-contract").textContent = `${ethers.utils.formatEther(u.contractValue)} ETH`;
+    const info = await health.getUserInsurerInfo(userAddress);
+    document.getElementById("health-insurer").textContent  = `${info.insurerName} (${info.insurerAddress})`;
+  } catch (error) {
+    console.error("Error loading Health ID:", error);
+  }
+}
+
+/* =================== Mock daily activity =================== */
+async function fetchMockData() {
+  try {
+    const response = await fetch('/static/assets/mock/mockhealthdata.json');
+    const data = await response.json();
+    document.querySelector('#steps').textContent    = `${data.steps.toLocaleString()} steps`;
+    document.querySelector('#sleep').textContent    = `${data.sleep} hrs`;
+    document.querySelector('#calories').textContent = `${data.calories} kcal`;
+  } catch (error) {
+    console.error('Failed to fetch mock data:', error);
+  }
+}
+
+/* =================== Rewards =================== */
+async function loadRedeemableValue(provider, userAddress) {
+  try {
+    const logger = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, provider);
+    const [activities, [distTh, elevTh], rewardWei] = await Promise.all([
+      logger.getUserActivities(userAddress),
+      logger.getThresholds(),
+      logger.rewardAmount()
+    ]);
+
+    let eligible = 0;
+    for (const a of activities) {
+      const distOK = ethers.BigNumber.from(a.distanceKmX100 ?? a[0]).gte(distTh);
+      const elevOK = ethers.BigNumber.from(a.elevationGainM ?? a[1]).gte(elevTh);
+      const notPaid = !(a.isRewarded ?? a[3]);
+      if (notPaid && (distOK || elevOK)) eligible++;
+    }
+    const totalWei = ethers.BigNumber.from(rewardWei).mul(eligible);
+    document.getElementById("redeemable-now").textContent =
+      eligible > 0 ? `${ethers.utils.formatEther(totalWei)} ETH` : "0 ETH";
+
+  } catch (e) {
+    console.error("Failed to load redeemable value:", e);
+    const el = document.getElementById("redeemable-now");
+    if (el) el.textContent = "—";
+  }
+}
+
+async function loadOverallEarnings(provider, userAddress) {
+  try {
+    const logger = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, provider);
+    const [activities, [distTh, elevTh], rewardWei] = await Promise.all([
+      logger.getUserActivities(userAddress),
+      logger.getThresholds(),
+      logger.rewardAmount(),
+    ]);
+
+    const midnight = new Date(); midnight.setHours(0,0,0,0);
+    const todayStart = Math.floor(midnight.getTime() / 1000);
+
+    let totalEligible = 0, todayEligible = 0;
+    for (const a of activities) {
+      const dist = a.distanceKmX100 ?? a[0];
+      const elev = a.elevationGainM ?? a[1];
+      const ts   = Number(a.timestamp ?? a[2]);
+      const eligible = ethers.BigNumber.from(dist).gte(distTh) || ethers.BigNumber.from(elev).gte(elevTh);
+      if (eligible) {
+        totalEligible++;
+        if (ts >= todayStart) todayEligible++;
+      }
+    }
+
+    const totalWei = ethers.BigNumber.from(rewardWei).mul(totalEligible);
+    const todayWei = ethers.BigNumber.from(rewardWei).mul(todayEligible);
+    document.getElementById("total-earned").textContent = `${ethers.utils.formatEther(totalWei)} ETH`;
+    document.getElementById("earned-today").textContent = `+${ethers.utils.formatEther(todayWei)} ETH`;
+
+  } catch (e) {
+    console.error("Failed to load overall earnings:", e);
+    const te = document.getElementById("total-earned");
+    const td = document.getElementById("earned-today");
+    if (te) te.textContent = "—";
+    if (td) td.textContent = "—";
+  }
+}
+
+async function redeemAllEligible() {
+  try {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    await provider.send("eth_requestAccounts", []);
+    const signer = provider.getSigner();
+    const contract = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, signer);
+
+    const btn = document.querySelector(".redeem-btn");
+    if (btn) { btn.disabled = true; btn.textContent = "Redeeming…"; }
+    const tx = await contract.redeemReward();
+    await tx.wait();
+    if (btn) { btn.disabled = false; btn.textContent = "🎁 Redeem"; }
+
+    const user = await signer.getAddress();
+    await loadRedeemableValue(provider, user);
+    await loadOverallEarnings(provider, user);
+    await updateDailyQuestStatus(provider, user);
+    await initCalendarFromActivities(provider, user);
+
+  } catch (e) {
+    console.error("Redeem failed:", e);
+    const btn = document.querySelector(".redeem-btn");
+    if (btn) { btn.disabled = false; btn.textContent = "🎁 Redeem"; }
+  }
+}
+
+/* =================== Quest Cards (cool UI) =================== */
+let QUESTS = [
+  { id:'q-5k',    reward:'— ETH', title:'Daily', desc:'Run 5 km',            goal:1, progress:0, done:false },
+  { id:'q-elev',  reward:'— ETH', title:'Daily', desc:'Step up 100 m',       goal:1, progress:0, done:false },
+  { id:'q-sleep', reward:'— ETH', title:'Daily', desc:'Sleep 8 hours',       goal:1, progress:0, done:false }, // static
+  { id:'q-ex30',  reward:'— ETH', title:'Daily', desc:'Exercise 30 minutes', goal:1, progress:0, done:false }  // static
+];
+
+function renderQuestCards(){
+  const wrap = document.getElementById("daily-quests");
+  if (!wrap) return;
+  wrap.classList.add("quest-grid");
+  wrap.innerHTML = QUESTS.map(q => `
+    <div class="quest-card ${q.done ? 'done':''}" id="${q.id}">
+      <div class="ribbon"><span class="coin">🪙</span><span class="amount">${q.reward}</span></div>
+      <div class="title">${q.title}</div>
+      <div class="desc">${q.desc}</div>
+      <div class="progress"><div class="bar" style="width:${Math.min(100, Math.round((q.progress/q.goal)*100))}%"></div></div>
+      <div class="count"><span>${q.progress} / ${q.goal}</span><span></span></div>
+    </div>
+  `).join('');
+}
+
+function setQuestProgress(id, progress){
+  const q = QUESTS.find(x => x.id === id); if(!q) return;
+  q.progress = Math.min(progress, q.goal); q.done = q.progress >= q.goal;
+  const el = document.getElementById(id); if(!el) return;
+  el.classList.toggle("done", q.done);
+  el.querySelector(".bar").style.width = `${Math.min(100, Math.round((q.progress/q.goal)*100))}%`;
+  el.querySelector(".count").firstElementChild.textContent = `${q.progress} / ${q.goal}`;
+}
+
+// Pull rewardAmount() and print as "0.001 ETH" on all ribbons
+async function setQuestRibbonAmounts(provider){
+  try {
+    const logger = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, provider);
+    const rewardWei = await logger.rewardAmount();
+    const text = `${ethers.utils.formatEther(rewardWei)} ETH`;
+    QUESTS.forEach(q => q.reward = text);
+    document.querySelectorAll('.ribbon .amount').forEach(el => el.textContent = text);
+  } catch(e){ console.error("setQuestRibbonAmounts failed", e); }
+}
+
+// Today-only completion for Run 5 km & Step up 100 m
+async function updateDailyQuestStatus(provider, user){
+  try {
+    const logger = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, provider);
+    const activities = await logger.getUserActivities(user);
+    const midnight = new Date(); midnight.setHours(0,0,0,0);
+    const todayStart = Math.floor(midnight.getTime()/1000);
+
+    let prog5k = 0, progElev = 0;
+    for(const a of activities){
+      const dist = a.distanceKmX100 ?? a[0]; // x100
+      const elev = a.elevationGainM ?? a[1];
+      const ts   = Number(a.timestamp ?? a[2]);
+      if (ts < todayStart) continue;
+      if (ethers.BigNumber.from(dist).gte(500)) prog5k = 1;
+      if (ethers.BigNumber.from(elev).gte(100)) progElev = 1;
+      if (prog5k && progElev) break;
+    }
+    setQuestProgress('q-5k',   prog5k);
+    setQuestProgress('q-elev', progElev);
+    // Sleep 8h & Exercise 30m remain static (0/1) until you add logic
+  } catch(e){ console.error("updateDailyQuestStatus failed", e); }
+}
+
+/* =================== Activity Calendar (uses same quest tags) =================== */
+const questLabels = {
+  run5k:   "🏁 Run 5 km",
+  elev100m:"⛰️ Step up 100 m",
+  sleep8h: "💤 Sleep 8 hours",
+  ex30m:   "💪 Exercise 30 minutes",
+};
+
+function tagsForActivity(a) {
+  const dist = a.distanceKmX100 ?? a[0];
+  const elev = a.elevationGainM ?? a[1];
+  const tags = [];
+  if (ethers.BigNumber.from(dist).gte(500)) tags.push("run5k");
+  if (ethers.BigNumber.from(elev).gte(100)) tags.push("elev100m");
+  // sleep8h / ex30m skipped (placeholders)
+  return tags;
+}
+
+function buildActivityMap(activities) {
+  const map = new Map(); // "YYYY-MM-DD" -> Set(tags)
+  for (const a of activities) {
+    const ts = Number(a.timestamp ?? a[2]);
+    const d = new Date(ts * 1000);
+    const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    const tags = tagsForActivity(a);
+    if (!tags.length) continue;
+    if (!map.has(key)) map.set(key, new Set());
+    const s = map.get(key);
+    tags.forEach(t => s.add(t));
+  }
+  return map;
+}
+
+function renderCalendar(activityMap, filter = "all") {
+  const calendarEl = document.getElementById("activity-calendar");
+  if (!calendarEl) return;
+  calendarEl.innerHTML = "";
+  const weekdays = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  for (const day of weekdays) {
+    const label = document.createElement("div");
+    label.textContent = day;
+    label.className = "weekday";
+    calendarEl.appendChild(label);
+  }
+  const today = new Date();
+  const y = today.getFullYear(), m = today.getMonth();
+  const firstDay = new Date(y, m, 1).getDay();
+  const days = new Date(y, m + 1, 0).getDate();
+
+  for (let i = 0; i < firstDay; i++) calendarEl.appendChild(document.createElement("div"));
+
+  for (let d = 1; d <= days; d++) {
+    const key = `${y}-${String(m+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const cell = document.createElement("div");
+    cell.textContent = d;
+    const tags = activityMap.get(key);
+    if (tags && (filter === "all" || tags.has(filter))) cell.classList.add("active-day");
+    calendarEl.appendChild(cell);
+  }
+}
+
+async function initCalendarFromActivities(provider, user) {
+  const logger = new ethers.Contract(activityLoggerAddress, activityLoggerAbi, provider);
+  const activities = await logger.getUserActivities(user);
+  const activityMap = buildActivityMap(activities);
+  renderCalendar(activityMap);
+  const sel = document.getElementById("quest-filter");
+  sel?.addEventListener("change", e => renderCalendar(activityMap, e.target.value));
+}
+
+/* =================== Go =================== */
+window.addEventListener("load", initCharacterStatus);
+</script>
+<script src="/static/main.js"></script>
+</body>
+</html>

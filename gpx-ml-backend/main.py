@@ -24,7 +24,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
 @app.get("/")
 def read_root():
-    return FileResponse("app/static/dashboardv14.html")
+    return FileResponse("app/static/index.html")
 
 # === Cấu hình ===
 MODEL_PATH = "app/fraud_detector_model.pkl"
